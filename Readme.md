@@ -3,7 +3,8 @@
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 <!-- default badges end -->
 
-# XAF - How to show filter dialog before opening a List View
+# XAF - How to show filter dialog before a List View
+
 
 When a user opens a large List View through a navigation item, you may want to display a pop-up window that allows you to define a filter for this List View before the application starts to load records. The filter dialog can keep user preferences and allows users to select one of the stored filters.
 
