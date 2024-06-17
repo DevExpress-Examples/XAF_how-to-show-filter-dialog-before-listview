@@ -12,7 +12,8 @@ using DevExpress.ExpressApp.Model.NodeGenerators;
 
 namespace DialogBeforeListViewEF.Module;
 
-// For more typical usage scenarios, be sure to check out https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.ModuleBase.
+// For more typical usage scenarios, be sure to check out https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.ModuleBase
+
 public sealed class DialogBeforeListViewEFModule : ModuleBase {
     public DialogBeforeListViewEFModule() {
 		// 
