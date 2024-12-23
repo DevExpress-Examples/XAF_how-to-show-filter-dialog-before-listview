@@ -1,10 +1,5 @@
 ﻿using DevExpress.ExpressApp;
-using DevExpress.Data.Filtering;
-using DevExpress.Persistent.Base;
 using DevExpress.ExpressApp.Updating;
-using DevExpress.Xpo;
-using DevExpress.ExpressApp.Xpo;
-using DevExpress.Persistent.BaseImpl;
 using E1554.Module;
 
 namespace DialogBeforeListView.Module.DatabaseUpdate;
@@ -16,34 +11,31 @@ public class Updater : ModuleUpdater {
     }
     public override void UpdateDatabaseAfterUpdateSchema() {
         base.UpdateDatabaseAfterUpdateSchema();
-        CreateMaster("Master 1");
-        CreateMaster("Master 2");
-        CreateMaster("Master 3");
-        CreateDetail("Detail 1");
-        CreateDetail("Detail 2");
-        CreateDetail("Detail 3");
-
-        ObjectSpace.CommitChanges(); //Uncomment this line to persist created object(s).
+        CreateTask("Task 1");
+        CreateTask("Task 2");
+        CreateTask("Task 3");
+        CreateEmployee(20);
+        CreateEmployee(30);
+        CreateEmployee(40);
+        ObjectSpace.CommitChanges();
+    }
+    private void CreateTask(string name) {
+        E1554.Module.Task master = ObjectSpace.FirstOrDefault<E1554.Module.Task>(t => t.Name == name);
+        if(master == null) {
+            master = ObjectSpace.CreateObject<E1554.Module.Task>();
+            master.Name = name;
+        }
+    }
+    private void CreateEmployee(int value) {
+        Employee detail = ObjectSpace.FirstOrDefault<Employee>(e => e.LastName == $"LastName {value}");
+        if(detail == null) {
+            detail = ObjectSpace.CreateObject<Employee>();
+            detail.LastName = $"LastName {value}";
+            detail.FirstName = $"FirstName {value}";
+            detail.Age = value;
+        }
     }
     public override void UpdateDatabaseBeforeUpdateSchema() {
         base.UpdateDatabaseBeforeUpdateSchema();
-        //if(CurrentDBVersion < new Version("1.1.0.0") && CurrentDBVersion > new Version("0.0.0.0")) {
-        //    RenameColumn("DomainObject1Table", "OldColumnName", "NewColumnName");
-        //}
-    }
-
-    private void CreateMaster(string name) {
-        Master master = ObjectSpace.FindObject<Master>(new BinaryOperator("MasterName", name));
-        if (master == null) {
-            master = ObjectSpace.CreateObject<Master>();
-            master.MasterName = name;
-        }
-    }
-    private void CreateDetail(string name) {
-        Detail detail = ObjectSpace.FindObject<Detail>(new BinaryOperator("DetailName", name));
-        if (detail == null) {
-            detail = ObjectSpace.CreateObject<Detail>();
-            detail.DetailName = name;
-        }
     }
 }

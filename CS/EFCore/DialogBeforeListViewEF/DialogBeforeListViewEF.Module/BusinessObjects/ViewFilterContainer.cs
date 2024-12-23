@@ -1,55 +1,54 @@
-using System;
-using DevExpress.ExpressApp.Editors;
-using System.ComponentModel;
-using DevExpress.Persistent.Base;
-using DevExpress.ExpressApp;
 using DevExpress.Data.Filtering;
+using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.DC;
-using System.Collections.Generic;
+using DevExpress.ExpressApp.Editors;
+using DevExpress.Persistent.Base;
+using System.ComponentModel;
 
 namespace E1554.Module {
     [DomainComponent]
-    public class ViewFilterContainer : IObjectSpaceLink {
-        private ViewFilterObject _Filter;
-        [DataSourceProperty("Filters")]
+    public class ViewFilterContainer : NonPersistentBaseObject, IObjectSpaceLink {
+        private ViewFilterObject filter;
+
+        [DataSourceProperty(nameof(Filters))]
         [ImmediatePostData]
         public ViewFilterObject Filter {
-            get { return _Filter; }
-            set { _Filter = value; }
+            get { return filter; }
+            set { filter = value; }
         }
-        private IList<ViewFilterObject> _Filters;
+        private IList<ViewFilterObject> filters;
         [Browsable(false)]
         public IList<ViewFilterObject> Filters {
             get {
-                if (_Filters == null && ObjectType != null) {
-                    _Filters = _ObjectSpace.GetObjects<ViewFilterObject>(new BinaryOperator("ObjectType", ObjectType));
+                if(filters == null && ObjectType != null) {
+                    filters = objectSpace.GetObjects<ViewFilterObject>(CriteriaOperator.FromLambda<ViewFilterObject>(v => v.DataTypeName == ObjectType.FullName));
                 }
-                return _Filters;
+                return filters;
             }
         }
-        [CriteriaOptions("ObjectType")]
-        [ImmediatePostData]
+        [CriteriaOptions(nameof(ObjectType))]
+        [Browsable(false)]
         public string Criteria {
             get { return Filter != null ? Filter.Criteria : String.Empty; }
             set {
-                if (Filter != null) {
+                if(Filter != null) {
                     Filter.Criteria = value;
                 }
             }
         }
-        private Type _ObjectType;
+        private Type objectType;
         [Browsable(false)]
         public Type ObjectType {
-            get { return _ObjectType; }
-            set { _ObjectType = value; }
+            get { return objectType; }
+            set { objectType = value; }
         }
-        private IObjectSpace _ObjectSpace;
+        private IObjectSpace objectSpace;
         IObjectSpace IObjectSpaceLink.ObjectSpace {
             get {
-                return _ObjectSpace;
+                return objectSpace;
             }
             set {
-                _ObjectSpace = value;
+                objectSpace = value;
             }
         }
     }

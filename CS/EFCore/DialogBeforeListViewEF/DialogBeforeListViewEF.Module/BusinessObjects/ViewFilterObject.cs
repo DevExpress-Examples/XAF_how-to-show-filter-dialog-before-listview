@@ -1,31 +1,40 @@
-using System;
-using DevExpress.Persistent.BaseImpl;
+using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.DC;
 using DevExpress.ExpressApp.Editors;
-using System.ComponentModel;
-using DevExpress.ExpressApp.Utils;
-using DevExpress.Persistent.BaseImpl.EF;
 using DevExpress.Persistent.Base;
+using DevExpress.Persistent.BaseImpl.EF;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E1554.Module {
-    [DefaultProperty("FilterName")]
+    [DefaultProperty(nameof(FilterName))]
     public class ViewFilterObject : BaseObject {
+        public virtual string FilterName { get; set; }
 
-        private Type fDataType;
-        [ImmediatePostData]
-        public virtual Type ObjectType {
-            get { return fDataType; }
+        [Browsable(false)]
+        public virtual string DataTypeName {
+            get { return fDataType == null ? string.Empty : fDataType.FullName; }
             set {
-                if (fDataType == value) return;
-                fDataType = value;
-                Criteria = string.Empty;
-                
+                ITypeInfo typeInfo = XafTypesInfo.Instance.FindTypeInfo(value);
+                fDataType = typeInfo == null ? null : typeInfo.Type;
             }
         }
 
-        [CriteriaOptions("ObjectType")]
-        public virtual string Criteria { get; set; }
+        private Type fDataType;
+        [NotMapped, ImmediatePostData]
+        [Browsable(false)]
+        public Type DataType {
+            get { return fDataType; }
+            set {
+                if(fDataType == value) return;
+                fDataType = value;
+                Criteria = string.Empty;
+            }
+        }
 
-        public virtual string FilterName { get; set; }
+        [CriteriaOptions(nameof(DataType))]
+        [FieldSize(FieldSizeAttribute.Unlimited)]
+        [EditorAlias(EditorAliases.CriteriaPropertyEditor)]
+        public virtual string Criteria { get; set; }
     }
 }
