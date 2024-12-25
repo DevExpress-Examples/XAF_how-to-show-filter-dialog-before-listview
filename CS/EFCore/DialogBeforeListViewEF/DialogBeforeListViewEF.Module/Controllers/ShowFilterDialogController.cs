@@ -1,31 +1,34 @@
-﻿using DevExpress.ExpressApp.Actions;
+﻿using DevExpress.ExpressApp;
+using DevExpress.ExpressApp.Actions;
 using DevExpress.ExpressApp.Editors;
-using DevExpress.ExpressApp;
-using E1554.Module;
-using DialogBeforeListView.Module;
+using DialogBeforeListViewEF.Module;
 
-namespace DialogBeforeListView.Blazor.Server.Controllers {
-    public class BlazorShowFilterDialogController : ViewController<ListView> {
+namespace E1554.Module {
+    public class ShowFilterDialogController : ViewController<ListView> {
+        const string DisableReason = "SuitableView";
         SimpleAction showFilterDialogAction;
-        public BlazorShowFilterDialogController() {
+        public ShowFilterDialogController() {
             TargetViewNesting = Nesting.Root;
             showFilterDialogAction = new SimpleAction(this, "ShowFilterDialog", "Filters");
             showFilterDialogAction.Execute += ShowFilterDialogAction_Execute;
         }
         protected override void OnActivated() {
             base.OnActivated();
-            if (Frame is Window && ((Window)Frame).IsMain) {
-                showFilterDialogAction.Active["IsMainWindow"] = true;
-                View.CollectionSource.Criteria[nameof(BlazorShowFilterDialogController)] = CollectionSourceBase.EmptyCollectionCriteria;
-                ShowFilterDialog(View);
+            if(Frame.Context == TemplateContext.ApplicationWindow || Frame.Context == TemplateContext.View) {
+                showFilterDialogAction.Active[DisableReason] = true;
+                View.CollectionSource.Criteria[nameof(ShowFilterDialogController)] = CollectionSourceBase.EmptyCollectionCriteria;
+                ShowFilterDialogOnActivated();
             } else {
-                showFilterDialogAction.Active["IsMainWindow"] = false;
+                showFilterDialogAction.Active[DisableReason] = false;
             }
         }
-        private void ShowFilterDialogAction_Execute(object sender, SimpleActionExecuteEventArgs e) {
-            ShowFilterDialog(View);
+        protected virtual void ShowFilterDialogOnActivated() {
+            ShowFilterDialog();
         }
-        protected void ShowFilterDialog(ListView listView) {
+        private void ShowFilterDialogAction_Execute(object sender, SimpleActionExecuteEventArgs e) {
+            ShowFilterDialog();
+        }
+        protected void ShowFilterDialog() {
             NonPersistentObjectSpace nonPersistentObjectSpace = (NonPersistentObjectSpace)Application.CreateObjectSpace(typeof(ViewFilterContainer));
             IObjectSpace persistentObjectSpace = Application.CreateObjectSpace(typeof(ViewFilterObject));
             nonPersistentObjectSpace.AdditionalObjectSpaces.Add(persistentObjectSpace);
@@ -33,29 +36,28 @@ namespace DialogBeforeListView.Blazor.Server.Controllers {
             newViewFilterContainer.ObjectType = View.ObjectTypeInfo.Type;
             newViewFilterContainer.Filter = GetFilterObject(persistentObjectSpace, ((IModelListViewAdditionalCriteria)View.Model).AdditionalCriteria, newViewFilterContainer.ObjectType);
             DetailView filterDetailView = Application.CreateDetailView(nonPersistentObjectSpace, newViewFilterContainer);
-            filterDetailView.Caption = String.Format("Filter for the {0} ListView", View.Caption);
+            filterDetailView.Caption = string.Format("Filter for the {0} ListView", View.Caption);
             filterDetailView.ViewEditMode = ViewEditMode.Edit;
             Application.ShowViewStrategy.ShowViewInPopupWindow(filterDetailView, () => FilterDetailView_OK(filterDetailView));
         }
-        void FilterDetailView_OK(DetailView filterDetailView) {
+        private void FilterDetailView_OK(DetailView filterDetailView) {
             filterDetailView.ObjectSpace.CommitChanges();
             ViewFilterContainer currentViewFilterContainer = (ViewFilterContainer)filterDetailView.CurrentObject;
             ((IModelListViewAdditionalCriteria)View.Model).AdditionalCriteria = currentViewFilterContainer.Criteria;
-            View.CollectionSource.Criteria[nameof(BlazorShowFilterDialogController)] = CriteriaEditorHelper.GetCriteriaOperator(currentViewFilterContainer.Criteria, currentViewFilterContainer.ObjectType, ObjectSpace);
+            View.CollectionSource.Criteria[nameof(ShowFilterDialogController)] = CriteriaEditorHelper.GetCriteriaOperator(currentViewFilterContainer.Criteria, currentViewFilterContainer.ObjectType, ObjectSpace);
         }
         private ViewFilterObject GetFilterObject(IObjectSpace objectSpace, string listViewCriteria, Type objectType) {
-            ViewFilterObject filterObject = objectSpace.FirstOrDefault<ViewFilterObject>(fo => fo.Criteria == listViewCriteria && fo.ObjectType == objectType);
-            if (filterObject == null) {
-                filterObject = objectSpace.FirstOrDefault<ViewFilterObject>(fo => fo.FilterName == "Default");
-                if (filterObject == null) {
-                    using (IObjectSpace creatingObjectSpace = Application.CreateObjectSpace(typeof(ViewFilterObject))) {
-                        ViewFilterObject newFilterObject = creatingObjectSpace.CreateObject<ViewFilterObject>();
-                        newFilterObject.FilterName = "Default";
-                        creatingObjectSpace.CommitChanges();
-                        filterObject = objectSpace.GetObject<ViewFilterObject>(newFilterObject);
-                    }
+            ViewFilterObject filterObject = objectSpace.FirstOrDefault<ViewFilterObject>(fo => fo.Criteria == listViewCriteria && fo.DataTypeName == objectType.FullName);
+            if(filterObject == null) {
+                filterObject = objectSpace.FirstOrDefault<ViewFilterObject>(fo => fo.FilterName == "All" && fo.DataTypeName == objectType.FullName);
+                if(filterObject == null) {
+                    ViewFilterObject newFilterObject = objectSpace.CreateObject<ViewFilterObject>();
+                    newFilterObject.DataType = objectType;
+                    newFilterObject.FilterName = "All";
+                    objectSpace.CommitChanges();
+                    filterObject = objectSpace.GetObject(newFilterObject);
                 }
-                filterObject.ObjectType = objectType;
+                filterObject.DataType = objectType;
                 filterObject.Criteria = listViewCriteria;
             }
             return filterObject;
