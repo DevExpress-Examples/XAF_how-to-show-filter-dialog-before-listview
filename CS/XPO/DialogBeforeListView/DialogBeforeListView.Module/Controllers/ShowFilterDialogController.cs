@@ -1,6 +1,7 @@
 ﻿using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.ExpressApp.Editors;
+using DevExpress.Persistent.Base;
 using DialogBeforeListView.Module;
 
 namespace E1554.Module {
@@ -9,7 +10,7 @@ namespace E1554.Module {
         SimpleAction showFilterDialogAction;
         public ShowFilterDialogController() {
             TargetViewNesting = Nesting.Root;
-            showFilterDialogAction = new SimpleAction(this, "ShowFilterDialog", "Filters");
+            showFilterDialogAction = new SimpleAction(this, "ShowFilterDialog", PredefinedCategory.Filters);
             showFilterDialogAction.Execute += ShowFilterDialogAction_Execute;
         }
         protected override void OnActivated() {
@@ -29,8 +30,8 @@ namespace E1554.Module {
             ShowFilterDialog();
         }
         protected void ShowFilterDialog() {
-            NonPersistentObjectSpace nonPersistentObjectSpace = (NonPersistentObjectSpace)Application.CreateObjectSpace(typeof(ViewFilterContainer));
-            IObjectSpace persistentObjectSpace = Application.CreateObjectSpace(typeof(ViewFilterObject));
+            NonPersistentObjectSpace nonPersistentObjectSpace = (NonPersistentObjectSpace)Application.CreateObjectSpace<ViewFilterContainer>();
+            IObjectSpace persistentObjectSpace = Application.CreateObjectSpace<ViewFilterObject>();
             nonPersistentObjectSpace.AdditionalObjectSpaces.Add(persistentObjectSpace);
             ViewFilterContainer newViewFilterContainer = nonPersistentObjectSpace.CreateObject<ViewFilterContainer>();
             newViewFilterContainer.ObjectType = View.ObjectTypeInfo.Type;
