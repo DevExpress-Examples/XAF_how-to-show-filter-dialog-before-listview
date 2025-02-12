@@ -1,6 +1,7 @@
 ﻿using DevExpress.ExpressApp;
 using DevExpress.ExpressApp.Actions;
 using DevExpress.ExpressApp.Editors;
+using DevExpress.Persistent.Base;
 using DialogBeforeListViewEF.Module;
 
 namespace E1554.Module {
@@ -9,7 +10,7 @@ namespace E1554.Module {
         SimpleAction showFilterDialogAction;
         public ShowFilterDialogController() {
             TargetViewNesting = Nesting.Root;
-            showFilterDialogAction = new SimpleAction(this, "ShowFilterDialog", "Filters");
+            showFilterDialogAction = new SimpleAction(this, "ShowFilterDialog", PredefinedCategory.Filters);
             showFilterDialogAction.Execute += ShowFilterDialogAction_Execute;
         }
         protected override void OnActivated() {
@@ -29,15 +30,14 @@ namespace E1554.Module {
             ShowFilterDialog();
         }
         protected void ShowFilterDialog() {
-            NonPersistentObjectSpace nonPersistentObjectSpace = (NonPersistentObjectSpace)Application.CreateObjectSpace(typeof(ViewFilterContainer));
-            IObjectSpace persistentObjectSpace = Application.CreateObjectSpace(typeof(ViewFilterObject));
+            NonPersistentObjectSpace nonPersistentObjectSpace = (NonPersistentObjectSpace)Application.CreateObjectSpace<ViewFilterContainer>();
+            IObjectSpace persistentObjectSpace = Application.CreateObjectSpace<ViewFilterObject>();
             nonPersistentObjectSpace.AdditionalObjectSpaces.Add(persistentObjectSpace);
             ViewFilterContainer newViewFilterContainer = nonPersistentObjectSpace.CreateObject<ViewFilterContainer>();
             newViewFilterContainer.ObjectType = View.ObjectTypeInfo.Type;
             newViewFilterContainer.Filter = GetFilterObject(persistentObjectSpace, ((IModelListViewAdditionalCriteria)View.Model).AdditionalCriteria, newViewFilterContainer.ObjectType);
             DetailView filterDetailView = Application.CreateDetailView(nonPersistentObjectSpace, newViewFilterContainer);
             filterDetailView.Caption = string.Format("Filter for the {0} ListView", View.Caption);
-            filterDetailView.ViewEditMode = ViewEditMode.Edit;
             Application.ShowViewStrategy.ShowViewInPopupWindow(filterDetailView, () => FilterDetailView_OK(filterDetailView));
         }
         private void FilterDetailView_OK(DetailView filterDetailView) {
