@@ -7,9 +7,7 @@
 
 # XAF - How to show filter dialog before a List View
 
-This example displays a pop-up filter dialog before the application starts to load List View data. This approach can be useful when the List View contains large amount of data.
-
-The filter dialog allows users to create filters and saves them in a data source.
+This example displays a pop-up filter dialog that allows users to set a filter for a list view before the application starts to load list view data. Users can create filters and save them in a data source. This approach can be useful when the list view contains large amount of data.
 
 ![Filter for ListView](filter-for-listview.png)
 
@@ -19,17 +17,17 @@ The filter dialog allows users to create filters and saves them in a data source
     * Implement an interface that expose the [AdditionalCriteria](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Module.cs#L40) property. This property stores the applied filter criteria. 
     * Override the [ExtendModelInterfaces](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.ModuleBase.ExtendModelInterfaces(DevExpress.ExpressApp.Model.ModelInterfaceExtenders)) method of your base Module to extend the Application Model with the declared interface and the `AdditionalCriteria` property.
 2. Create the [ViewFilterObject](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterObject.cs) class. Instances of this class store user filters.
-3. Create the non-persistent [ViewFilterObject](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterObject.cs) class. An object of this class contains a list of user filters (`ViewFilterObject` objects) and the currently applied filter. The `ViewFilterContainer`'s Detail View serves as the filter dialog.  
+3. Create the non-persistent [ViewFilterContainer](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterContainer.cs) class. An object of this class contains a list of user filters (`ViewFilterObject` objects) and the currently applied filter. The `ViewFilterContainer`'s Detail View serves as the filter dialog.  
 4. Implement [ShowFilterDialogController](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/ShowFilterDialogController.cs) to display the filter dialog. When a user selects a filter and clicks the **OK** button, the controller assigns the corresponding filter criteria to the `AdditionalCriteria` Application Model property.
 5. Implement [NewViewFilterObjectController](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/NewViewFilterObjectController.cs) to initialize a new instance of the `ViewFilterObject` class when a user clicks the **New** button in the `ViewFilterObject` lookup List View.
 
 ## Files to Review
 
-* [Module.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Module.cs) (EFCore Solution) / [Module.cs](CS/XPO/DialogBeforeListView/DialogBeforeListView.Module/Module.cs) (XPO Solution)
-* [ViewFilterObject.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterObject.cs) (EFCore Solution) / [ViewFilterObject.cs](CS/XPO/DialogBeforeListView/DialogBeforeListView.Module/BusinessObjects/ViewFilterObject.cs) (XPO Solution)
-* [ViewFilterContainer.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterContainer.cs) (EFCore Solution) / [ViewFilterContainer.cs](CS/XPO/DialogBeforeListView/DialogBeforeListView.Module/BusinessObjects/ViewFilterContainer.cs) (XPO Solution)
-* [ShowFilterDialogController.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/ShowFilterDialogController.cs) (EFCore Solution) / [ShowFilterDialogController.cs](CS/XPO/DialogBeforeListView/DialogBeforeListView.Module/Controllers/ShowFilterDialogController.cs) (XPO Solution)
-* [NewViewFilterObjectController.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/NewViewFilterObjectController.cs) (EFCore Solution) / [NewViewFilterObjectController.cs](CS/XPO/DialogBeforeListView/DialogBeforeListView.Module/Controllers/NewViewFilterObjectController.cs) (XPO Solution)
+* [Module.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Module.cs)
+* [ViewFilterObject.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterObject.cs)
+* [ViewFilterContainer.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterContainer.cs)
+* [ShowFilterDialogController.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/ShowFilterDialogController.cs)
+* [NewViewFilterObjectController.cs](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/NewViewFilterObjectController.cs)
 
 ## Documentation
 
