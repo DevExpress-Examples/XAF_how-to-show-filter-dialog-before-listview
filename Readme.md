@@ -4,21 +4,22 @@
 [![](https://img.shields.io/badge/💬_Leave_Feedback-feecdd?style=flat-square)](#does-this-example-address-your-development-requirementsobjectives)
 <!-- default badges end -->
 
-# XAF - How to show filter dialog before a List View
+# XAF - How to show a filter dialog before a List View
 
-This example displays a pop-up filter dialog that allows users to set a filter for a list view before the application starts to load list view data. Users can create filters and save them in a data source. This approach can be useful when the list view contains large amount of data.
+
+This example displays a pop-up filter dialog that allows users to set a filter for a list view before the application starts to load list view data. Users can create filters and save them in a data source. This approach can be useful when the list view contains a large amount of data.
 
 ![Filter for ListView](filter-for-listview.png)
 
 ## Implementation Details
 
 1. Extend the Application Model with an additional property.
-    * Implement an interface that expose the [AdditionalCriteria](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Module.cs#L40) property. This property stores the applied filter criteria. 
+    * Implement an interface that exposes the [AdditionalCriteria](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Module.cs#L40) property. This property stores the applied filter criteria.
     * Override the [ExtendModelInterfaces](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.ModuleBase.ExtendModelInterfaces(DevExpress.ExpressApp.Model.ModelInterfaceExtenders)) method of your base Module to extend the Application Model with the declared interface and the `AdditionalCriteria` property.
 2. Create the [ViewFilterObject](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterObject.cs) class. Instances of this class store user filters.
 3. Create the non-persistent [ViewFilterContainer](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/BusinessObjects/ViewFilterContainer.cs) class. An object of this class contains a list of user filters (`ViewFilterObject` objects) and the currently applied filter. The `ViewFilterContainer`'s Detail View serves as the filter dialog.  
 4. Implement [ShowFilterDialogController](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/ShowFilterDialogController.cs) to display the filter dialog. When a user selects a filter and clicks the **OK** button, the controller assigns the corresponding filter criteria to the `AdditionalCriteria` Application Model property.
-5. Implement [NewViewFilterObjectController](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/NewViewFilterObjectController.cs) to initialize a new instance of the `ViewFilterObject` class when a user clicks the **New** button in the `ViewFilterObject` lookup List View.
+5. Implement [NewViewFilterObjectController](CS/EFCore/DialogBeforeListViewEF/DialogBeforeListViewEF.Module/Controllers/NewViewFilterObjectController.cs) to initialize a new instance of the `ViewFilterObject` class when a user clicks **New** in the `ViewFilterObject` lookup List View.
 
 ## Files to Review
 
@@ -31,9 +32,9 @@ This example displays a pop-up filter dialog that allows users to set a filter f
 ## Documentation
 
 - [Non-Persistent Objects](https://docs.devexpress.com/eXpressAppFramework/116516/business-model-design-orm/non-persistent-objects)
-- [Data Types Supported by built-in Editors](https://docs.devexpress.com/eXpressAppFramework/113014/business-model-design-orm/data-types-supported-by-built-in-editors)
+- [Data Types of Business Class Properties and Built-in Property Editors](https://docs.devexpress.com/eXpressAppFramework/113014/business-model-design-orm/data-types-supported-by-built-in-editors)
 - [How to: Extend and Access the Application Model Nodes from Controllers](https://docs.devexpress.com/eXpressAppFramework/112785/ui-construction/application-model-ui-settings-storage/customize-application-model-in-code/how-to-extend-the-application-model-nodes-from-controllers)
-- [ShowNavigationItemController class](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.SystemModule.ShowNavigationItemController)
+- [ShowNavigationItemController Class](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.SystemModule.ShowNavigationItemController)
 - [DialogController class](https://docs.devexpress.com/eXpressAppFramework/DevExpress.ExpressApp.SystemModule.DialogController)
 - [Lookup List View](https://docs.devexpress.com/eXpressAppFramework/400501/ui-construction/controllers-and-actions/actions/access-actions-in-different-ui-areas/lookup-list-view).
 
