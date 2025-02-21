@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace E1554.Module {
     [DomainComponent]
-    public class ViewFilterContainer : NonPersistentBaseObject, IObjectSpaceLink {
+    public class ViewFilterContainer : NonPersistentBaseObject {
         private ViewFilterObject filter;
 
         [DataSourceProperty(nameof(Filters))]
