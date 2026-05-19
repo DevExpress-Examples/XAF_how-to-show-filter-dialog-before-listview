@@ -15,7 +15,6 @@ public class DialogBeforeListViewWindowsFormsApplication : WinApplication {
 		SplashScreen = new DXSplashScreen(typeof(XafSplashScreen), new DefaultOverlayFormOptions());
         ApplicationName = "DialogBeforeListView";
         CheckCompatibilityType = DevExpress.ExpressApp.CheckCompatibilityType.DatabaseSchema;
-        UseOldTemplates = false;
         DatabaseVersionMismatch += DialogBeforeListViewWindowsFormsApplication_DatabaseVersionMismatch;
         CustomizeLanguagesList += DialogBeforeListViewWindowsFormsApplication_CustomizeLanguagesList;
     }
